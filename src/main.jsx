@@ -1,14 +1,10 @@
-import DashboardLayout from "./layout/DashboardLayout";
-import DashboardPage from "./pages/DashboardPage";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import AppRouter from "./router/AppRouter";
 
-<Route
-  path="/dashboard"
-  element={
-    <PrivateRoute>
-      <DashboardLayout>
-        <DashboardPage />
-      </DashboardLayout>
-    </PrivateRoute>
-  }
-/>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <AppRouter />
+  </React.StrictMode>
+);
 

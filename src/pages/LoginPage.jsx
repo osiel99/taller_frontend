@@ -15,7 +15,7 @@ export default function LoginPage() {
 
       console.log("Token recibido:", result.access_token);
 
-      // Guardar token
+      // Guardar token correctamente
       localStorage.setItem("token", result.access_token);
 
       // Redirigir al dashboard
