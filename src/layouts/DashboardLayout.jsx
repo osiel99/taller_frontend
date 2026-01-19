@@ -1,17 +1,37 @@
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
+import { Link, Outlet } from "react-router-dom";
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout() {
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
+    <div className="flex h-screen">
 
-      <div style={{ flex: 1 }}>
-        <Topbar />
-        <div style={{ padding: "20px" }}>
-          {children}
-        </div>
-      </div>
+      {/* SIDEBAR */}
+      <aside className="w-64 bg-gray-900 text-white p-4 flex flex-col gap-4">
+
+        <h2 className="text-xl font-bold mb-4">Taller Municipal</h2>
+
+        <nav className="flex flex-col gap-2">
+
+          <Link to="/dashboard" className="hover:bg-gray-700 p-2 rounded">
+            Dashboard
+          </Link>
+
+          {/* NUEVOS MÓDULOS */}
+          <Link to="/dashboard/ordenes-compra" className="hover:bg-gray-700 p-2 rounded">
+            Órdenes de Compra
+          </Link>
+
+          <Link to="/dashboard/recepciones" className="hover:bg-gray-700 p-2 rounded">
+            Recepciones
+          </Link>
+
+        </nav>
+      </aside>
+
+      {/* CONTENIDO PRINCIPAL */}
+      <main className="flex-1 p-6 overflow-auto bg-gray-100">
+        <Outlet />
+      </main>
+
     </div>
   );
 }

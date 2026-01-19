@@ -1,36 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
-// PÁGINAS PRINCIPALES
+import DashboardLayout from "../layouts/DashboardLayout";
+
+// Páginas existentes
 import LoginPage from "../pages/LoginPage";
 import DashboardPage from "../pages/DashboardPage";
 
-// LAYOUT
-import DashboardLayout from "../layouts/DashboardLayout";
-
-// MÓDULO VEHÍCULOS
-import VehiculosPage from "../pages/vehiculos/VehiculosPage";
-
-// MÓDULO ÓRDENES DE SERVICIO
-import OrdenesServicioPage from "../pages/ordenes/OrdenesServicioPage";
-
-// MÓDULO INVENTARIO
-import InventarioPage from "../pages/inventario/InventarioPage";
-
-// MODUULO COMPRAS
-import ComprasPage from "../pages/compras/ComprasPage";
-
-// MODULO PROVEEDORES
-import ProveedoresPage from "../pages/proveedores/ProveedoresPage";
-
-// PROTECCIÓN DE RUTAS
-import ProtectedRoute from "./ProtectedRoute";
+// Nuevos módulos
+import OrdenesCompraPage from "../pages/ordenes_compra/OrdenesCompraPage";
+import RecepcionesPage from "../pages/recepciones/RecepcionesPage";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* RUTA PÚBLICA */}
+        {/* LOGIN */}
         <Route path="/" element={<LoginPage />} />
 
         {/* RUTAS PROTEGIDAS */}
@@ -38,59 +24,17 @@ export default function AppRouter() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          {/* Dashboard principal */}
+          <Route index element={<DashboardPage />} />
 
-        {/* VEHÍCULOS */}
-        <Route
-          path="/vehiculos"
-          element={
-            <DashboardLayout>
-              <VehiculosPage />
-            </DashboardLayout>
-          }
-        />
-
-        {/* ÓRDENES DE SERVICIO */}
-        <Route
-          path="/ordenes"
-          element={
-            <DashboardLayout>
-              <OrdenesServicioPage />
-            </DashboardLayout>
-          }
-        />
-
-        {/* INVENTARIO */}
-        <Route
-          path="/inventario"
-          element={
-            <DashboardLayout>
-              <InventarioPage />
-            </DashboardLayout>
-          }
-        />
-         {/* COMPRAS */}
-        <Route
-          path="/compras"
-          element={
-             <DashboardLayout>
-                <ComprasPage />
-             </DashboardLayout>
-         }
-         />
-
-        {/* PROVEEDORES */}
-        <Route
-          path="/proveedores"
-          element={
-            <DashboardLayout>
-              <ProveedoresPage />
-            </DashboardLayout>
-          }
-      />
+          {/* NUEVAS RUTAS PROFESIONALES */}
+          <Route path="ordenes-compra" element={<OrdenesCompraPage />} />
+          <Route path="recepciones" element={<RecepcionesPage />} />
+        </Route>
 
       </Routes>
     </BrowserRouter>
