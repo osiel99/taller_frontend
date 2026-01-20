@@ -12,4 +12,11 @@ export default {
     const res = await api.post(BASE, data);
     return res.data;
   },
+
+  getById: async (id) => {
+    const res = await api.get(`/ui/oc/${id}`);
+    return res.data;
+  },
+
+
 };

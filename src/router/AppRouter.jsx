@@ -30,6 +30,8 @@ export default function AppRouter() {
         >
           {/* Dashboard principal */}
           <Route index element={<DashboardPage />} />
+          <Route path="ordenes-compra/:id" element={<OrdenCompraDetallePage />} />
+
 
           {/* NUEVAS RUTAS PROFESIONALES */}
           <Route path="ordenes-compra" element={<OrdenesCompraPage />} />
