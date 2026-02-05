@@ -4,6 +4,8 @@ import vehiculosService from "../../services/vehiculosService";
 
 export default function OrdenServicioForm({ initialData, onCancel, onSuccess }) {
   const [vehiculos, setVehiculos] = useState([]);
+  const [loadingVehiculos, setLoadingVehiculos] = useState(true);
+
   const [form, setForm] = useState(
     initialData || {
       vehiculo_id: "",
@@ -15,9 +17,17 @@ export default function OrdenServicioForm({ initialData, onCancel, onSuccess }) 
 
   useEffect(() => {
     const cargarVehiculos = async () => {
-      const data = await vehiculosService.getAll();
-      setVehiculos(data);
+      try {
+        setLoadingVehiculos(true);
+        const data = await vehiculosService.getAll();
+        setVehiculos(data);
+      } catch (err) {
+        console.error("Error cargando vehículos:", err);
+      } finally {
+        setLoadingVehiculos(false);
+      }
     };
+
     cargarVehiculos();
   }, []);
 
@@ -28,13 +38,33 @@ export default function OrdenServicioForm({ initialData, onCancel, onSuccess }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (initialData) {
-      await ordenesServicioService.update(initialData.id, form);
-    } else {
-      await ordenesServicioService.create(form);
+    // Validación mínima
+    if (!form.vehiculo_id) {
+      alert("Seleccione un vehículo");
+      return;
+    }
+    if (!form.fecha) {
+      alert("Seleccione una fecha");
+      return;
     }
 
-    onSuccess();
+    const payload = {
+      ...form,
+      vehiculo_id: Number(form.vehiculo_id),
+    };
+
+    try {
+      if (initialData) {
+        await ordenesServicioService.update(initialData.id, payload);
+      } else {
+        await ordenesServicioService.create(payload);
+      }
+
+      onSuccess();
+    } catch (err) {
+      console.error("Error guardando orden:", err);
+      alert("Ocurrió un error al guardar la orden");
+    }
   };
 
   return (
@@ -45,17 +75,29 @@ export default function OrdenServicioForm({ initialData, onCancel, onSuccess }) 
 
       <form onSubmit={handleSubmit} className="grid gap-4">
 
-        <select name="vehiculo_id" value={form.vehiculo_id} onChange={handleChange}>
-          <option value="">Seleccione un vehículo</option>
-          {vehiculos.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.placa} - {v.marca} {v.modelo}
-            </option>
-          ))}
-        </select>
+        {/* Vehículos */}
+        {loadingVehiculos ? (
+          <p className="text-gray-500">Cargando vehículos...</p>
+        ) : (
+          <select name="vehiculo_id" value={form.vehiculo_id} onChange={handleChange}>
+            <option value="">Seleccione un vehículo</option>
+            {vehiculos.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.placa} - {v.marca} {v.modelo}
+              </option>
+            ))}
+          </select>
+        )}
 
-        <input type="date" name="fecha" value={form.fecha} onChange={handleChange} />
+        {/* Fecha */}
+        <input
+          type="date"
+          name="fecha"
+          value={form.fecha}
+          onChange={handleChange}
+        />
 
+        {/* Descripción */}
         <textarea
           name="descripcion"
           value={form.descripcion}
@@ -63,6 +105,7 @@ export default function OrdenServicioForm({ initialData, onCancel, onSuccess }) 
           placeholder="Descripción del servicio"
         />
 
+        {/* Estatus */}
         <select name="estatus" value={form.estatus} onChange={handleChange}>
           <option value="Pendiente">Pendiente</option>
           <option value="En proceso">En proceso</option>

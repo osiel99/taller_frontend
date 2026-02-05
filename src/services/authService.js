@@ -1,7 +1,6 @@
 import api from "./api";
 
 // === LOGIN ===
-// Igual que antes, pero usando axios en lugar de apiPost
 export async function loginRequest(username, password) {
   const res = await api.post("/auth/login", {
     username,
@@ -11,8 +10,12 @@ export async function loginRequest(username, password) {
   return res.data; // { access_token, token_type }
 }
 
+// === GUARDAR TOKEN ===
+export function saveToken(token) {
+  localStorage.setItem("token", token);
+}
+
 // === VALIDAR TOKEN ===
-// Mantengo tu lógica EXACTA, solo la dejo más limpia
 export function isTokenValid() {
   const token = localStorage.getItem("token");
   if (!token) return false;
@@ -26,4 +29,8 @@ export function isTokenValid() {
   }
 }
 
+// === CERRAR SESIÓN ===
+export function logout() {
+  localStorage.removeItem("token");
+}
 

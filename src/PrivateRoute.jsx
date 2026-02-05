@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
+import { isTokenValid } from "../services/authService";
 
 export default function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
+  const tokenEsValido = isTokenValid();
 
-  if (!token) {
+  if (!tokenEsValido) {
     return <Navigate to="/" replace />;
   }
 

@@ -1,6 +1,20 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { logout } from "../services/authService";
 
 export default function DashboardLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const isActive = (path) =>
+    location.pathname === path
+      ? "bg-gray-700 p-2 rounded"
+      : "hover:bg-gray-700 p-2 rounded";
+
   return (
     <div className="flex h-screen">
 
@@ -11,20 +25,44 @@ export default function DashboardLayout() {
 
         <nav className="flex flex-col gap-2">
 
-          <Link to="/dashboard" className="hover:bg-gray-700 p-2 rounded">
+          <Link to="/dashboard" className={isActive("/dashboard")}>
             Dashboard
           </Link>
 
-          {/* NUEVOS MÓDULOS */}
-          <Link to="/dashboard/ordenes-compra" className="hover:bg-gray-700 p-2 rounded">
+          <Link to="/dashboard/vehiculos" className={isActive("/dashboard/vehiculos")}>
+            Vehículos
+          </Link>
+
+          <Link to="/dashboard/ordenes-servicio" className={isActive("/dashboard/ordenes-servicio")}>
+            Órdenes de Servicio
+          </Link>
+
+          <Link to="/dashboard/ordenes-compra" className={isActive("/dashboard/ordenes-compra")}>
             Órdenes de Compra
           </Link>
 
-          <Link to="/dashboard/recepciones" className="hover:bg-gray-700 p-2 rounded">
+          <Link to="/dashboard/recepciones" className={isActive("/dashboard/recepciones")}>
             Recepciones
           </Link>
 
+          <Link to="/dashboard/inventario" className={isActive("/dashboard/inventario")}>
+            Inventario
+          </Link>
+
+          <Link to="/dashboard/proveedores" className={isActive("/dashboard/proveedores")}>
+            Proveedores
+          </Link>
+
         </nav>
+
+        {/* BOTÓN DE LOGOUT */}
+        <button
+          onClick={handleLogout}
+          className="mt-auto bg-red-600 hover:bg-red-700 p-2 rounded text-center"
+        >
+          Cerrar sesión
+        </button>
+
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}

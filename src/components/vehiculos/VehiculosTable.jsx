@@ -17,6 +17,14 @@ export default function VehiculosTable({ vehiculos, onCrear, onEditar, onElimina
           </tr>
         </thead>
         <tbody>
+          {vehiculos.length === 0 && (
+            <tr>
+              <td colSpan="5" className="text-center py-4 text-gray-500">
+                No hay vehículos registrados
+              </td>
+            </tr>
+          )}
+
           {vehiculos.map((v) => (
             <tr key={v.id}>
               <td>{v.placa}</td>

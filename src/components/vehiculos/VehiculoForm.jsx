@@ -18,10 +18,13 @@ export default function VehiculoForm({ initialData, onCancel, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Convertir año a número
+    const payload = { ...form, anio: Number(form.anio) };
+
     if (initialData) {
-      await vehiculosService.update(initialData.id, form);
+      await vehiculosService.update(initialData.id, payload);
     } else {
-      await vehiculosService.create(form);
+      await vehiculosService.create(payload);
     }
 
     onSuccess();

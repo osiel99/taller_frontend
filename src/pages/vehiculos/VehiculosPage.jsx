@@ -7,10 +7,18 @@ export default function VehiculosPage() {
   const [vehiculos, setVehiculos] = useState([]);
   const [modo, setModo] = useState("lista"); // lista | crear | editar
   const [vehiculoEdit, setVehiculoEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const cargarVehiculos = async () => {
-    const data = await vehiculosService.getAll();
-    setVehiculos(data);
+    try {
+      setLoading(true);
+      const data = await vehiculosService.getAll();
+      setVehiculos(data);
+    } catch (err) {
+      console.error("Error cargando vehículos:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -19,27 +27,43 @@ export default function VehiculosPage() {
 
   return (
     <div>
-      {modo === "lista" && (
+      {/* Loader */}
+      {loading && <p className="text-gray-500 mb-4">Cargando vehículos...</p>}
+
+      {/* LISTA */}
+      {modo === "lista" && !loading && (
         <VehiculosTable
           vehiculos={vehiculos}
-          onCrear={() => setModo("crear")}
+          onCrear={() => {
+            setVehiculoEdit(null); // Limpia datos previos
+            setModo("crear");
+          }}
           onEditar={(v) => {
             setVehiculoEdit(v);
             setModo("editar");
           }}
           onEliminar={async (id) => {
-            await vehiculosService.remove(id);
-            cargarVehiculos();
+            try {
+              await vehiculosService.remove(id);
+              cargarVehiculos();
+            } catch (err) {
+              console.error("Error eliminando vehículo:", err);
+            }
           }}
         />
       )}
 
+      {/* FORMULARIO (crear o editar) */}
       {(modo === "crear" || modo === "editar") && (
         <VehiculoForm
-          initialData={vehiculoEdit}
-          onCancel={() => setModo("lista")}
+          initialData={modo === "editar" ? vehiculoEdit : null}
+          onCancel={() => {
+            setVehiculoEdit(null);
+            setModo("lista");
+          }}
           onSuccess={() => {
             cargarVehiculos();
+            setVehiculoEdit(null);
             setModo("lista");
           }}
         />

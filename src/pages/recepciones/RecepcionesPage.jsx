@@ -6,10 +6,18 @@ import RecepcionForm from "../../components/recepciones/RecepcionForm";
 export default function RecepcionesPage() {
   const [recepciones, setRecepciones] = useState([]);
   const [modo, setModo] = useState("lista"); // lista | crear
+  const [loading, setLoading] = useState(true);
 
   const cargarRecepciones = async () => {
-    const data = await recepcionesService.getAll();
-    setRecepciones(data);
+    try {
+      setLoading(true);
+      const data = await recepcionesService.getAll();
+      setRecepciones(data);
+    } catch (err) {
+      console.error("Error cargando recepciones:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -18,13 +26,18 @@ export default function RecepcionesPage() {
 
   return (
     <div>
-      {modo === "lista" && (
+      {/* Loader */}
+      {loading && <p className="text-gray-500 mb-4">Cargando recepciones...</p>}
+
+      {/* LISTA */}
+      {modo === "lista" && !loading && (
         <RecepcionesTable
           recepciones={recepciones}
           onCrear={() => setModo("crear")}
         />
       )}
 
+      {/* FORMULARIO */}
       {modo === "crear" && (
         <RecepcionForm
           onCancel={() => setModo("lista")}

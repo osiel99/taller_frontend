@@ -1,25 +1,41 @@
 import { useEffect, useState } from "react";
+import api from "../../services/api";
 
 export default function DashboardPage() {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const cargarDashboard = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No hay token, usuario no autenticado");
+        return;
+      }
+
+      const res = await api.get("/dashboard/general", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setData(res.data);
+    } catch (err) {
+      console.error("Error cargando dashboard:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    fetch("http://127.0.0.1:8000/dashboard/general", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(setData);
+    cargarDashboard();
   }, []);
 
   return (
     <div>
       <h1>Dashboard General</h1>
 
-      {!data && <p>Cargando...</p>}
+      {loading && <p>Cargando...</p>}
 
       {data && (
         <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>

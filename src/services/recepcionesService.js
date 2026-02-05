@@ -2,7 +2,7 @@ import api from "./api";
 
 const BASE = "/recepciones/";
 
-export default {
+const recepcionesService = {
   getAll: async () => {
     const res = await api.get(BASE);
     return res.data;
@@ -13,3 +13,5 @@ export default {
     return res.data;
   },
 };
+
+export default recepcionesService;

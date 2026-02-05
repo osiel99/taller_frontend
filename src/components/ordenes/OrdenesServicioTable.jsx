@@ -1,4 +1,6 @@
 export default function OrdenesServicioTable({ ordenes, onCrear, onEditar, onEliminar }) {
+  const lista = ordenes || [];
+
   return (
     <div className="card">
       <div className="card-header flex justify-between">
@@ -16,8 +18,17 @@ export default function OrdenesServicioTable({ ordenes, onCrear, onEditar, onEli
             <th></th>
           </tr>
         </thead>
+
         <tbody>
-          {ordenes.map((o) => (
+          {lista.length === 0 && (
+            <tr>
+              <td colSpan="5" className="text-center py-4 text-gray-500">
+                No hay órdenes de servicio registradas
+              </td>
+            </tr>
+          )}
+
+          {lista.map((o) => (
             <tr key={o.id}>
               <td>{o.vehiculo_id}</td>
               <td>{o.fecha}</td>

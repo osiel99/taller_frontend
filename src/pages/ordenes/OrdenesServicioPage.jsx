@@ -7,10 +7,18 @@ export default function OrdenesServicioPage() {
   const [ordenes, setOrdenes] = useState([]);
   const [modo, setModo] = useState("lista"); // lista | crear | editar
   const [ordenEdit, setOrdenEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const cargarOrdenes = async () => {
-    const data = await ordenesServicioService.getAll();
-    setOrdenes(data);
+    try {
+      setLoading(true);
+      const data = await ordenesServicioService.getAll();
+      setOrdenes(data);
+    } catch (err) {
+      console.error("Error cargando órdenes de servicio:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -19,27 +27,43 @@ export default function OrdenesServicioPage() {
 
   return (
     <div>
-      {modo === "lista" && (
+      {/* Loader */}
+      {loading && <p className="text-gray-500 mb-4">Cargando órdenes...</p>}
+
+      {/* LISTA */}
+      {modo === "lista" && !loading && (
         <OrdenesServicioTable
           ordenes={ordenes}
-          onCrear={() => setModo("crear")}
+          onCrear={() => {
+            setOrdenEdit(null); // Limpia datos previos
+            setModo("crear");
+          }}
           onEditar={(o) => {
             setOrdenEdit(o);
             setModo("editar");
           }}
           onEliminar={async (id) => {
-            await ordenesServicioService.remove(id);
-            cargarOrdenes();
+            try {
+              await ordenesServicioService.remove(id);
+              cargarOrdenes();
+            } catch (err) {
+              console.error("Error eliminando orden:", err);
+            }
           }}
         />
       )}
 
+      {/* FORMULARIO */}
       {(modo === "crear" || modo === "editar") && (
         <OrdenServicioForm
-          initialData={ordenEdit}
-          onCancel={() => setModo("lista")}
+          initialData={modo === "editar" ? ordenEdit : null}
+          onCancel={() => {
+            setOrdenEdit(null);
+            setModo("lista");
+          }}
           onSuccess={() => {
             cargarOrdenes();
+            setOrdenEdit(null);
             setModo("lista");
           }}
         />

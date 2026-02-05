@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import ordenesCompraService from "../../services/ordenesCompraService";
 import OrdenesCompraTable from "../../components/ordenes_compra/OrdenesCompraTable";
 import OrdenCompraForm from "../../components/ordenes_compra/OrdenCompraForm";
+import ImportarOCModal from "../../components/ordenes_compra/ImportarOCModal";
 
 export default function OrdenesCompraPage() {
   const [ordenes, setOrdenes] = useState([]);
   const [modo, setModo] = useState("lista"); // lista | crear
-  const [ocEdit, setOcEdit] = useState(null);
+  const [mostrarImportar, setMostrarImportar] = useState(false);
 
   const cargarOrdenes = async () => {
     const data = await ordenesCompraService.getAll();
@@ -20,10 +21,23 @@ export default function OrdenesCompraPage() {
   return (
     <div>
       {modo === "lista" && (
-        <OrdenesCompraTable
-          ordenes={ordenes}
-          onCrear={() => setModo("crear")}
-        />
+        <>
+          <div className="flex justify-between mb-4">
+            <button className="btn-primary" onClick={() => setModo("crear")}>
+              + Nueva Orden
+            </button>
+
+            {/* NUEVO BOTÓN PARA IMPORTAR */}
+            <button
+              className="btn-secondary"
+              onClick={() => setMostrarImportar(true)}
+            >
+              Importar Orden de Compra
+            </button>
+          </div>
+
+          <OrdenesCompraTable ordenes={ordenes} />
+        </>
       )}
 
       {modo === "crear" && (
@@ -32,6 +46,17 @@ export default function OrdenesCompraPage() {
           onSuccess={() => {
             cargarOrdenes();
             setModo("lista");
+          }}
+        />
+      )}
+
+      {/* MODAL DE IMPORTACIÓN */}
+      {mostrarImportar && (
+        <ImportarOCModal
+          onClose={() => setMostrarImportar(false)}
+          onImported={() => {
+            setMostrarImportar(false);
+            cargarOrdenes();
           }}
         />
       )}
